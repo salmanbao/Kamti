@@ -1,0 +1,7 @@
+export const AmlAppName = 'AML Service';
+
+export enum AmlError {
+  AML_CHECK_FAILED = 'AML_CHECK_FAILED',
+  AML_PROCESSING_FAILED = 'AML_PROCESSING_FAILED',
+  AML_CALLBACK_FAILED = 'AML_CALLBACK_FAILED',
+}

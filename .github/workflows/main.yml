@@ -1,0 +1,37 @@
+name: 🚀 Deploy microservice to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Microservice
+
+    steps:
+      - name: 🚀 Connect & Deploy Backend
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.REMOTE_SERVER }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: 22
+          script: |
+            echo "=== 🚀 Starting backend deployment ==="
+            cd /home/johnny/system/A-Bot-microservices
+            export NVM_DIR="/home/johnny/.nvm"
+            source "$NVM_DIR/nvm.sh"
+            echo "→ Pulling latest code from main..."
+            git fetch origin main
+            git reset --hard origin/main
+            echo "→ Installing dependencies..."
+            npm install --save
+            echo "→ Building microservices (if required)..."
+            npm run build || echo "No build step defined."
+            echo "→ Restarting PM2 process..."
+            pm2 restart microservice || pm2 restart all
+            echo "→ Flushing logs..."
+            pm2 flush microservice || pm2 flush
+            echo "✅ microservice deployment completed successfully!"
